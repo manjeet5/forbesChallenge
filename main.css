@@ -1,0 +1,118 @@
+.mainContainer{
+	display:flex;
+	flex-flow:row nowrap;
+	align-items: center;
+	position:absolute;
+	top:40%;
+	left:20%;
+	width:60%;
+	overflow: scroll;
+}
+#pagination{
+	display:flex;
+	flex-flow: row nowrap;
+	width: 100%;
+	justify-content: center;
+	position:absolute;
+	top:20%;
+}
+
+.modal{
+	display:flex;
+	flex-flow:column;
+	position:absolute;
+	background:#fffbfb;
+	border:solid 0.5rem;
+	z-index:1;
+	/* top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%); */
+	width: 50%;
+	padding:2rem;
+	padding-top: 0.5rem;
+  border-radius:1rem;
+}
+
+.modalContainer{
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	justify-items: center;
+	align-items: center;
+	width: 100vw;
+	height: 100vh;
+}
+@media only screen and (max-width: 450px){
+	.mainContainer{
+		flex-flow:column nowrap;
+		position:relative;
+		width: 100%;
+		position:relative;
+		height:90vh;
+		top:0;
+		left:0;
+	}
+	#pagination{
+		position:relative;
+		top:0;
+	}
+
+	.modal{
+		width:70%;
+	}
+	.modalContainer{
+		top:0;
+	}
+}
+
+.photoContainer{
+	flex:1 0 auto;
+	padding:0.1rem;
+	padding-top: 0.2rem
+}
+
+.photoContainer:hover{
+	background: #eae6e6;
+  border-radius: 0.1rem;
+}
+.page{
+	padding:0.5rem;
+  font-family: sans-serif;
+	cursor: pointer;
+}
+.page:hover{
+  background-color: #03a9f447;
+	border-radius: 0.1rem;
+}
+
+.active{
+	font-weight: bold;
+	background: #03a9f4;
+	border-radius: 0.1rem;
+}
+.photo{
+	border: 1px solid #ddd;
+  border-radius: 4px;
+	cursor: pointer;
+}
+
+
+
+.closeModal{
+	align-self: right;
+	width:2%;
+	height:2%;
+	min-width:30px;
+	min-height:30px;
+	align-self: flex-end;
+}
+.closeModal:hover{
+	background: #e87488a6;
+    border-radius: 1rem;
+}
+.modalPhoto{
+	width:80%;
+	align-self: center;
+		max-height:70vh;
+
+}
