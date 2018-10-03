@@ -8,7 +8,7 @@
 	width:60%;
 	overflow: scroll;
 }
-#pagination{
+#paginationSection{
 	display:flex;
 	flex-flow: row nowrap;
 	width: 100%;
@@ -17,6 +17,10 @@
 	top:20%;
 }
 
+.pagination{
+	display:flex;
+	font-size: 1rem;
+}
 .modal{
 	display:flex;
 	flex-flow:column;
@@ -52,16 +56,21 @@
 		top:0;
 		left:0;
 	}
-	#pagination{
+	#paginationSection{
 		position:relative;
 		top:0;
 	}
-
+	.pagination{
+		font-size: 0.8rem;
+	}
 	.modal{
 		width:70%;
 	}
 	.modalContainer{
 		top:0;
+	}
+	.page{
+		padding:0.25rem;
 	}
 }
 
