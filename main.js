@@ -1,3 +1,5 @@
+
+
 /***********GLOBAL VARIABLESS***********/
 const imgSize = {
 	SQUARE150:'q',
@@ -13,20 +15,28 @@ let currentPage = 1;
 let currentMax = 0;
 let tag = "boat";
 let apiKey = 'a861e4e0717e30bf858deabeed8c41e8';
+let appContainer;
+let mainContainer;
+let pagination;
 /***********GLOBAL VARIABLESS***********/
 
+
+
 /***********SETTING APPLICATION STRUCTURE***********/
-let appContainer = document.getElementById("app");
-let mainContainer = document.createElement("div");
-appContainer.appendChild(mainContainer);
-mainContainer.setAttribute("class", "mainContainer");
-let pagination = document.createElement("div");
-pagination.setAttribute("class", "pagination");
+function initialiseStructure(){
+	appContainer = document.getElementById("app");
+	mainContainer = document.createElement("div");
+	appContainer.appendChild(mainContainer);
+	mainContainer.setAttribute("class", "mainContainer");
+	pagination = document.createElement("div");
+	pagination.setAttribute("class", "pagination");
+}
 /***********SETTING APPLICATION STRUCTURE***********/
 
 window.addEventListener("load",()=>{
 	loadData(perPage,currentPage,tag)
 		.then(()=>{
+			initialiseStructure()
 			createPaginationPages(true);
 			let paginationSection = document.getElementById("paginationSection");
 		  paginationSection.appendChild(pagination);
@@ -178,3 +188,5 @@ function hideModal(){
 	let node = document.getElementById('modalContainer');
 	if(node) node.remove();
 }
+
+module.exports = {updateCurrentMax}
