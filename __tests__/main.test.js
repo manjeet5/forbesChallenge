@@ -17,10 +17,28 @@
 	  of results returned
 
 */
-const {updateCurrentMax} = require('../main.js') ;
+const {updateCurrentMax, currentMax, pages} = require('../main.js') ;
 
 describe('Pagination Logic',()=>{
- it("should calculate the currentMax to 10 on initialLoad",()=>{
-		expect('10').toMatch('10');
- })
+
+it("should calculate the currentMax to 10 on initialLoad",()=>{
+
+ });
+
+it("should calculate the currentMax to 0 when Prev is pressed",()=>{
+
+  })
+it("currentMax should stay to be 0 when Prev is pressed again",()=>{
+
+  })
+it("should calculate the currentMax to 10 when Next is pressed the second time",()=>{
+
+		})
+it("should calculate the currentMax to 20 when Next is pressed the third time",()=>{
+
+		})
+it("should calculate the currentMax to 20 when Next is pressed the fourth time",()=>{
+
+  })
+
 })

@@ -96,19 +96,24 @@ function createPaginationIterator(iteratorType){
 	pagination.appendChild(node);
 	node.setAttribute("class", "page");
 	node.innerHTML = iteratorType;
-	console.log("iteratorType", iteratorType)
-	node.addEventListener("click", ()=>updateCurrentMax(iteratorType));
+	// console.log("iteratorType", iteratorType)
+	node.addEventListener("click", ()=>updatePagination(iteratorType));
 }
 
+function updatePagination(iteratorType){
+	updateCurrentMax(iteratorType);
+	removeChildren(pagination)
+	createPaginationPages();
+}
 /*
 updateCurrentMax: it updates the global variable currentMax that is used to calculate the next/previous pagination pages
 iteratorType: Its value is "prev"/"next". It is used to determine how to update the currentMax logic
 */
 function updateCurrentMax(iteratorType){
+
 	if(iteratorType == 'prev') currentMax -= currentMax - perPage < 0 ? 0 : perPage;
 	else currentMax += currentMax + perPage > pages? 0 :  perPage;
-	removeChildren(pagination)
-	createPaginationPages();
+		console.log(currentMax)
 }
 
 
@@ -127,7 +132,7 @@ function updateActivePageStyle(pageId){
 }
 
 function removeChildren(node){
-	console.log(node.firstChild)
+	// console.log(node.firstChild)
 	while(node.firstChild){
 		node.removeChild(node.firstChild)
 	}
@@ -187,4 +192,4 @@ function hideModal(){
 	if(node) node.remove();
 }
 
-module.exports = {updateCurrentMax}
+module.exports = {updateCurrentMax, currentMax, pages}
