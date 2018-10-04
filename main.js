@@ -15,20 +15,17 @@ let currentPage = 1;
 let currentMax = 0;
 let tag = "boat";
 let apiKey = 'a861e4e0717e30bf858deabeed8c41e8';
-let appContainer;
-let mainContainer;
-let pagination;
+let appContainer = document.getElementById("app");
+let mainContainer = document.createElement("div");
+let pagination = document.createElement("div");
 /***********GLOBAL VARIABLESS***********/
 
 
 
 /***********SETTING APPLICATION STRUCTURE***********/
 function initialiseStructure(){
-	appContainer = document.getElementById("app");
-	mainContainer = document.createElement("div");
 	appContainer.appendChild(mainContainer);
 	mainContainer.setAttribute("class", "mainContainer");
-	pagination = document.createElement("div");
 	pagination.setAttribute("class", "pagination");
 }
 /***********SETTING APPLICATION STRUCTURE***********/
@@ -36,7 +33,7 @@ function initialiseStructure(){
 window.addEventListener("load",()=>{
 	loadData(perPage,currentPage,tag)
 		.then(()=>{
-			initialiseStructure()
+			initialiseStructure();
 			createPaginationPages(true);
 			let paginationSection = document.getElementById("paginationSection");
 		  paginationSection.appendChild(pagination);
@@ -57,7 +54,8 @@ function loadData(perPage, page,tag){
 			 photoArray.map(photo =>{
 				let {farm, id, server, secret} = photo;
 				let src = createImgSrc(farm, id, server, secret);
-				let imgContainer = createImageContainer(src, imgSize.THUMBNAIL)
+				let imgContainer = createImageContainer(src, imgSize.THUMBNAIL);
+				// console.log("mainContainer",mainContainer);
 				mainContainer.appendChild(imgContainer);
 				images.push(src);
 			})
@@ -161,7 +159,7 @@ function createImgNode(src, size,className){
 function createCloseButton(){
 	let closeImage = document.createElement("img");
 	closeImage.setAttribute("class", "closeModal");
-	closeImage.setAttribute("src", "close.svg");
+	closeImage.setAttribute("src", "../close.svg");
 	closeImage.addEventListener("click", hideModal);
 	closeImage.setAttribute("id", "closeModal");
 	return closeImage;
