@@ -1,3 +1,6 @@
+
+
+/***********GLOBAL VARIABLESS***********/
 const imgSize = {
 	SQUARE150:'q',
 	SQUARE75:'sq',
@@ -5,7 +8,6 @@ const imgSize = {
 	SMALL320:'n',
 	MEDIUM800:'c'
 }
-
 const images = [];
 let pages;
 let perPage = 10;
@@ -13,9 +15,37 @@ let currentPage = 1;
 let currentMax = 0;
 let tag = "boat";
 let apiKey = 'a861e4e0717e30bf858deabeed8c41e8';
-let bodyNode = document.getElementsByTagName("body")[0];
+let appContainer = document.getElementById("app");
+let mainContainer = document.createElement("div");
+let pagination = document.createElement("div");
+/***********GLOBAL VARIABLESS***********/
 
 
+
+/***********SETTING APPLICATION STRUCTURE***********/
+function initialiseStructure(){
+	appContainer.appendChild(mainContainer);
+	mainContainer.setAttribute("class", "mainContainer");
+	pagination.setAttribute("class", "pagination");
+}
+/***********SETTING APPLICATION STRUCTURE***********/
+
+window.addEventListener("load",()=>{
+	loadData(perPage,currentPage,tag)
+		.then(()=>{
+			initialiseStructure();
+			createPaginationPages(true);
+			let paginationSection = document.getElementById("paginationSection");
+		  paginationSection.appendChild(pagination);
+		})
+})
+
+/***********RETRIEVES DATA FROM FLICKR API***********/
+/*
+	perPage: no.of max images to be returned in a call
+	page: the page number whose images need to be returned
+	tag: content on which the images have to be searched in the Flickr api
+*/
 function loadData(perPage, page,tag){
 	let url = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${tag}&per_page=${perPage}&page=${page}&format=json&nojsoncallback=1`;
 	return axios.get(url)
@@ -24,63 +54,77 @@ function loadData(perPage, page,tag){
 			 photoArray.map(photo =>{
 				let {farm, id, server, secret} = photo;
 				let src = createImgSrc(farm, id, server, secret);
-				let imgContainer = createImageContainer(src, imgSize.THUMBNAIL)
+				let imgContainer = createImageContainer(src, imgSize.THUMBNAIL);
+				// console.log("mainContainer",mainContainer);
 				mainContainer.appendChild(imgContainer);
 				images.push(src);
 			})
 		})
 		.catch(err => console.log(err))
 }
+/***********RETRIEVES DATA FROM FLICKR API***********/
 
+/*
+createPaginationPages : creates the Pagination Content
+initialLoad: This ensures the paginationContainer children are
+removed unless it is the first load(where the pagination
+container is empty)
+*/
+function createPaginationPages(initialLoad){
+	let counter = 1;
+	if(!initialLoad) removeChildren(pagination);
+	createPaginationIterator("Prev");
+	while(counter<=perPage ){
+		let page = document.createElement("div");
+		page.setAttribute("class", "page");
+		page.setAttribute("id",currentMax + counter)
+		page.innerHTML = currentMax + counter;
+		page.addEventListener("click", (e) => updateImageContent(e))
+		pagination.appendChild(page);
+		counter+=1;
+	}
+	createPaginationIterator("Next");
+}
+
+
+/*
+createPaginationIterator: it creates the Next/Prev elements of Pagination
+iteratorType: It defines what type of iterator  - Next / Prev
+*/
 function createPaginationIterator(iteratorType){
 	let node = document.createElement("div");
 	pagination.appendChild(node);
 	node.setAttribute("class", "page");
 	node.innerHTML = iteratorType;
-	iteratorType.toLowerCase() === "prev" ? node.addEventListener("click", decreaseCurrentMax)
-		:node.addEventListener("click", increaseCurrentMax)
-
-}
-function createPages(initialLoad){
-	let iterator = 1;
-	if(!initialLoad) removeChildren(pagination);
-	createPaginationIterator("Prev");
-	while(iterator<=perPage ){
-		let page = document.createElement("div");
-		page.setAttribute("class", "page");
-		page.setAttribute("id",currentMax + iterator )
-		page.innerHTML = currentMax + iterator;
-		page.addEventListener("click", (e) => getNewImages(e))
-		pagination.appendChild(page);
-		iterator+=1;
-	}
-	createPaginationIterator("Next");
+	console.log("iteratorType", iteratorType)
+	node.addEventListener("click", ()=>updateCurrentMax(iteratorType));
 }
 
-function getNewImages(event){
-	console.log("CURRENTPAGE",currentPage)
-	let oldCurrentPage = document.getElementById(currentPage);
-	if(oldCurrentPage) oldCurrentPage.setAttribute("class", "page")
-	currentPage = event.target.id;
-	let newCurrentPage = document.getElementById(currentPage);
-  newCurrentPage.setAttribute("class", "page active")
+/*
+updateCurrentMax: it updates the global variable currentMax that is used to calculate the next/previous pagination pages
+iteratorType: Its value is "prev"/"next". It is used to determine how to update the currentMax logic
+*/
+function updateCurrentMax(iteratorType){
+	if(iteratorType == 'prev') currentMax -= currentMax - perPage < 0 ? 0 : perPage;
+	else currentMax += currentMax + perPage > pages? 0 :  perPage;
+	removeChildren(pagination)
+	createPaginationPages();
+}
+
+
+function updateImageContent(event){
+	updateActivePageStyle(event.target.id);
 	removeChildren(mainContainer)
   loadData(perPage,currentPage,tag);
 }
 
-function decreaseCurrentMax(){
-	currentMax -= currentMax - perPage < 0 ? 0 : perPage;
-	removeChildren(pagination)
-	createPages();
-	// console.log("DECREASE by PERPAGE ", perPage , currentMax);
+function updateActivePageStyle(pageId){
+	let oldCurrentPage = document.getElementById(currentPage);
+	if(oldCurrentPage) oldCurrentPage.setAttribute("class", "page")
+	currentPage = pageId;
+	let newCurrentPage = document.getElementById(currentPage);
+	newCurrentPage.setAttribute("class", "page active")
 }
-function increaseCurrentMax(){
-	currentMax += currentMax + perPage > pages? 0 :  perPage;
-	removeChildren(pagination);
-	createPages();
-	// console.log("INCREASE by PERPAGE ", perPage , currentMax);
-}
-
 
 function removeChildren(node){
 	console.log(node.firstChild)
@@ -88,37 +132,6 @@ function removeChildren(node){
 		node.removeChild(node.firstChild)
 	}
 }
-// function deleteImages(){
-// 	while(mainContainer.firstChild){
-// 		mainContainer.removeChild(mainContainer.firstChild)
-// 	}
-// }
-
-window.addEventListener("load",()=>{
-	loadData(perPage,currentPage,tag)
-		.then(()=>{
-			let pagination = document.createElement("div");
-			pagination.setAttribute("class", "pagination");
-			createPages(true);
-			// currentMax += perPage;
-			let paginationContainer = document.getElementById("pagination");
-		  paginationContainer.appendChild(pagination);
-		})
-
-})
-
-let appContainer = document.getElementById("app");
-let mainContainer = document.createElement("div");
-appContainer.appendChild(mainContainer);
-mainContainer.setAttribute("class", "mainContainer");
-
-
-var mobileQuery = window.matchMedia('(max-width: 450px)');
-console.log(images);
-mobileQuery.addListener(()=>updateImgSizes());
-
-
-
 
 
 function createImageContainer(src, size, className){
@@ -131,14 +144,14 @@ function createImageContainer(src, size, className){
 function createImgSrc(farm, id, server, secret){
 		return `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}`;
 }
+
 function createImgNode(src, size,className){
-	let srcLink = `${src}_${size}.jpg`;
+	let imageName = `${src}_${size}.jpg`;
 	let imgNode = document.createElement("img");
-	imgNode.setAttribute("src", srcLink);
+	imgNode.setAttribute("src", imageName);
 	if(className) imgNode.setAttribute("class", `photo ${className}`);
   else imgNode.setAttribute("class", `photo`);
 	imgNode.addEventListener("click", ()=>{
-		console.log("SRC ", src);
 		showModal(src)})
 	return imgNode;
 }
@@ -146,13 +159,13 @@ function createImgNode(src, size,className){
 function createCloseButton(){
 	let closeImage = document.createElement("img");
 	closeImage.setAttribute("class", "closeModal");
-	closeImage.setAttribute("src", "close.svg");
+	closeImage.setAttribute("src", "../close.svg");
 	closeImage.addEventListener("click", hideModal);
 	closeImage.setAttribute("id", "closeModal");
 	return closeImage;
 }
+
 function showModal(photoSrc){
- console.log('BODYNODE children ',document.getElementById('modal') )
 	if(!document.getElementById('modalContainer')){
 		let modalContainer = document.createElement("div");
 		modalContainer.setAttribute("class", "modalContainer");
@@ -163,8 +176,8 @@ function showModal(photoSrc){
 		modal.setAttribute('class', 'modal')
 		modal.setAttribute('id', 'modal')
 		modal.appendChild(createCloseButton());
-		console.log(photoSrc);
 		modal.append(createImgNode(photoSrc, imgSize.MEDIUM800,"modalPhoto"))
+		let bodyNode = document.getElementsByTagName("body")[0];
 		bodyNode.appendChild(	modalContainer);
 	}
 }
@@ -173,3 +186,5 @@ function hideModal(){
 	let node = document.getElementById('modalContainer');
 	if(node) node.remove();
 }
+
+module.exports = {updateCurrentMax}
